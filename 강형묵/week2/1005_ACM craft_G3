@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 100000
+int time[1000];
+int arr[1000][1000];
+int dp[1000];
+
+int find(int i){
+    if (dp[i]!=-1){return dp[i];}
+    if (dp[i]==time[i]){return dp[i];}
+    dp[i]=time[i];
+    int temp = 0;
+    for (int j = 0; j < MAX; j++) {
+        if (arr[i][j] == -1) break;  
+        
+        int res = find(arr[i][j]-1);   
+        if (res > temp) temp = res;  
+    }
+    dp[i]+=temp;
+    return dp[i];
+}
+
+int main() {
+    int t;
+    scanf("%d", &t);
+    for (int i=0; i<t; i++){
+        int a,b;
+        int c,d;
+        scanf("%d %d", &a, &b);
+        int ord[b][2];
+        int goal;
+        for (int j=0; j<a; j++){
+            scanf("%d", &c);
+            time[j]=c;
+        }
+        for (int j=0; j<b; j++){
+            scanf("%d %d", &c, &d);
+            ord[j][0]=c;
+            ord[j][1]=d;
+        }
+        scanf("%d", &c);
+        goal=c;
+        
+        for (int n=0; n<a; n++){
+            for (int m=0; m<1000; m++){
+                arr[n][m]=-1;
+            }
+        }
+        for (int n=0; n<a; n++){
+            int k=0;
+            for (int m=0; m<b; m++){
+                if (ord[m][1]==n+1){arr[n][k++]=ord[m][0];}
+            }
+        }
+        for (int n=0; n<a; n++){
+            dp[n]=-1;
+            if (arr[n][0]==-1){dp[n]=time[n];}
+        }
+        printf("%d\n", find(goal-1));
+    }   
+}
