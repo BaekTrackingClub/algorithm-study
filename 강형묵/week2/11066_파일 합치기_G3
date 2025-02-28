@@ -1,0 +1,78 @@
+#include <stdio.h>
+#define MAX 500
+#define INTMAX 2147483647
+
+int dp[MAX+1][MAX+1];
+// int val;
+
+
+int min(int ary[], int i, int j){
+    // int index=i;
+    int cnt=INTMAX;
+    // printf("cnt\n");
+    for (int k=i;k<=j; k++){
+        if (cnt>=ary[k]){
+            cnt=ary[k];
+            // index = k;
+        }
+    }
+    // printf("%d\n", cnt);
+    return cnt;
+}
+
+int subsum(int arr[], int i, int j){
+    int sum=0;
+    for (int k=i;k<=j;k++){
+        sum+=arr[k];
+        // printf("%d ", arr[k]);
+    }
+    // printf("\n");
+    return sum;
+}
+
+int add(int arr[], int i, int j){
+    // printf("i, j: %d %d \n", i,j);
+    int temp[MAX+2];
+    if (dp[i][j]!=-1){return dp[i][j];}
+    dp[i][j]=0;
+    if (i==j){
+        return dp[i][j];
+    }
+    if (i==j-1){
+        dp[i][j]+=arr[i]+arr[j];
+        return dp[i][j];
+    }
+    for (int k=i; k<j; k++){
+        temp[k]=add(arr, i, k)+add(arr, k+1, j);
+    }
+    dp[i][j]+=min(temp, i, j-1)+subsum(arr,i,j);
+    
+    return dp[i][j];
+}
+
+
+int main() {
+    int t;
+    scanf("%d", &t);
+    for (int m=0; m<t; m++){
+        // val=0;
+        int N;
+        scanf("%d", &N);
+        int arr[N];
+        // printf("N: %d\n", N);
+        for (int i=0; i<N; i++){
+            scanf("%d", &arr[i]);
+            // printf("%d ", arr[i]);
+        }
+        // printf("\n");
+        for (int i=0; i<=N; i++){
+            for (int j=0; j<=N; j++){
+                dp[i][j]=-1;
+            }
+        }
+        // printf("subsum: %d\n", subsum(arr,0,N-1));
+        printf("%d\n", add(arr, 0, N-1));
+    }
+    
+    
+}

@@ -1,0 +1,50 @@
+#include <stdio.h>
+int max(int ary[], int length){
+    int cnt=0;
+    for (int i=0;i<length; i++){
+        if (cnt<ary[i]){
+            cnt=ary[i];
+        }
+    }
+    return cnt;
+}
+int main() {
+    int a;
+    scanf("%d", &a);
+    int arr[a];
+    for (int i=0; i<a; i++){
+        int k;
+        scanf("%d", &k);
+        arr[i]=k;
+    }
+    int dp[a];
+    int cnt[a];
+    for (int i = 0; i <a; i++){
+        dp[i]=1;
+    }
+    for (int i=0; i<a; i++){
+        for (int j = 0; j<i;j++){
+            if (arr[i]>arr[j]){
+                if (dp[i]<=dp[j]){
+                    dp[i]=dp[j]+1;
+                }
+            }
+        }
+    }
+    int ans = max(dp,a);
+    int newarr[ans];
+    int k = ans;
+    int j;
+    for (int i=a-1; i>=0; i--){
+        if ((dp[i]==k && k==ans)||(dp[i]==k && dp[i]<dp[j])){
+            j=i;
+            k--;
+            newarr[k]=arr[i];
+        }
+    }
+    printf("%d\n", ans);
+    for (int i=0; i<ans; i++){
+        printf("%d ", newarr[i]);
+    }
+    return 0;
+}
