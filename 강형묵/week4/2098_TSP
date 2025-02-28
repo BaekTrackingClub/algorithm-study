@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <math.h>
+
+#define MAX 16
+#define MAX_N 1024*64 
+#define INTMAX 2147483647
+
+int value[MAX][MAX]={0};
+int dp[MAX][MAX_N];
+
+void rem(int i, int j, int arr[], int newarr[]){
+    int x=0;
+    for (int k=0; k<j;k++){
+        if (i==arr[k]){
+            continue;
+        }
+        newarr[x++] = arr[k];
+    }
+}
+
+int cal(int k, int array[MAX]){
+    int ans=0;
+    for (int i=0;i<k;i++){
+        ans+=(int)pow(2,array[i]);
+    }
+    return ans;
+}
+
+int TSP(int i, int k, int arr[MAX]){
+    // printf("print: TSP\n");
+    int temp = cal(k, arr);
+    if (dp[i][temp]!=-1){
+        return dp[i][temp];
+    }
+    dp[i][temp]=0;
+    // if (k==0){
+    //     dp[i][temp]=value[i][0];
+    //     // 
+    //     return dp[i][temp];
+    // }
+    if (k==1){
+        dp[i][temp]=value[i][arr[0]]+value[arr[0]][0];
+        // printf("no way: %d\n", dp[i][temp]);
+        return dp[i][temp];
+    }
+    int cnt=INTMAX;
+    for (int j=0; j<k; j++){
+        // if (value[i][arr[j]]==0){continue;}
+        int newarr[k-1];
+        rem(arr[j], k, arr, newarr);
+        if (cnt> value[i][arr[j]] + TSP(arr[j], k-1, newarr)){
+            cnt=value[i][arr[j]] + TSP(arr[j], k-1, newarr);
+            // printf("%d\n", cnt);
+        }
+    }
+    // 
+    dp[i][temp]=cnt;
+    return dp[i][temp];
+}
+
+
+
+int main() {
+    int N;
+    scanf("%d", &N);
+    int arr[N];
+    for (int i=0; i<N;i++){
+        for (int j=0; j<N; j++){
+            scanf("%d", &value[i][j]);
+            if(!value[i][j]){value[i][j]=2000000;}
+        }
+        arr[i]=i;
+    }
+    for (int i=0; i<N;i++){
+        for (int j=0; j<pow(2,N); j++){
+            dp[i][j]=-1;
+        }
+    }
+    int newarr[N-1];
+    rem(0, N, arr, newarr);
+    printf("%d", TSP(0, N-1, newarr));
+    
+}
