@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int main() {
+    int a, b;
+    scanf("%d %d", &a, &b); 
+    int arr[a];
+    for (int i = 0; i < a; i++) {
+        int k;
+        scanf("%d", &k); 
+        arr[i] = k;
+    }
+    
+    int cnt[b + 1];
+    cnt[0]=1;
+    for (int k =1 ; k<=b;k++){
+        cnt[k]=0;
+    }
+    for (int i = 0; i < a; i++) {
+        for (int j = arr[i]; j <= b; j++) {
+            cnt[j]=cnt[j]+cnt[j-arr[i]];
+        }
+    }
+    printf("%d", cnt[b]);
+    
+    return 0; 
+}
