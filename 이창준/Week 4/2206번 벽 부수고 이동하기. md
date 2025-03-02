@@ -46,4 +46,5 @@ def bfs(x, y, d, chance):
 # BFS 실행
 shortest = bfs(0, 0, 1, 1)  # (0, 0)에서 출발, 처음에는 벽을 부술 기회 1번 있음
 print(shortest)
+
 ```
