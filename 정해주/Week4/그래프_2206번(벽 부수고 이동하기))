@@ -1,1 +1,78 @@
-# 2206번: 
+# 2206번: 벽 부수고 이동하기, 골드3, BFS
+
+## 문제
+NxM 행렬이 있다. 0은 이동할 수 있는 곳을 나타내고, 1은 이동할 수 없는 벽이 있는 곳을 나타낸다.
+이때 (1, 1)에서 (N, M)까지의 최단 거리를 구하라. 단, 최대 1개의 벽을 부술 수 있음.
+
+## 코드
+  from collections import deque
+  
+  def matrix_bfs(N, M, matrix):
+      visited = [[[0] * 2 for _ in range(M)] for _ in range(N)] #벽을 부수면 1, 안 부쉈으면 0
+      queue = deque([(0, 0, 0)])  # (x, y, 부숨 여부)
+      visited[0][0][0] = 1  # 시작 지점 거리 1
+      
+      directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+      while queue:
+          x, y, broken = queue.popleft()
+          
+          if x == N - 1 and y == M - 1:
+              return visited[x][y][broken]
+  
+          for dx, dy in directions:
+              nx, ny = x + dx, y + dy
+  
+              if 0 <= nx < N and 0 <= ny < M:
+                  if matrix[nx][ny] == 0 and visited[nx][ny][broken] == 0:
+                      visited[nx][ny][broken] = visited[x][y][broken] + 1
+                      queue.append((nx, ny, broken))
+                  
+                  if matrix[nx][ny] == 1 and broken == 0:
+                      visited[nx][ny][1] = visited[x][y][0] + 1
+                      queue.append((nx, ny, 1))
+  
+      return -1
+  
+  N, M = map(int, input().split())
+  matrix = [list(map(int, input().strip())) for _ in range(N)]
+  
+  print(matrix_bfs(N, M, matrix))
+
+## 비교
+  def maze_bfs(maze):
+      def is_route(x, y):
+          return 0 <= x < len(maze[0]) and 0 <= y < len(maze) and maze[y][x] == 0
+  
+      directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+      kueue = [(0, 0)]
+      discover = [[0]*len(maze) for _ in range(len(maze))]
+      discover_count = 1
+      parent = {}
+      solution = []
+      
+      while kueue:
+          x, y = kueue.pop(0)
+          if discover[y][x] == 0:
+              discover[y][x] = discover_count
+              discover_count += 1
+              
+              if (x, y) == (len(maze[0]) - 1, len(maze) - 1):
+                  path = [(x, y)]
+                  while (x, y) in parent:
+                      x, y = parent[(x, y)]
+                      path.append((x, y))
+                  path.reverse()
+                  for coor in path:
+                      solution.append(discover[coor[1]][coor[0]])
+                  return discover, solution
+              
+              for dx, dy in directions:
+                  nx, ny = x + dx, y + dy
+                  if is_route(nx, ny) and discover[ny][nx] == 0:
+                      kueue.append((nx, ny))
+                      parent[(nx, ny)] = (x, y)
+      
+      return discover, None
+
+## 덧붙임
+조건 하나 늘었다고 생각해야 할 점이 많아짐... 벽 부순 여부까지 기억하면서 BFS를 동작하면 풀리는 문제였음.
