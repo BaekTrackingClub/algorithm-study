@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <string.h>
+#define MAX 10000
+
+int N;
+int arr[MAX];
+
+void swap(int a, int b, int arr[]){
+    while(a < b){
+        int tmp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = tmp;
+        a++;
+        b--;
+    }
+}
+
+int judg(int arr[], int N){
+    for (int i=0; i<N-1; i++){
+        if (arr[i]>arr[i+1]){return 0;}
+    }
+    return 1;
+}
+
+int main() {
+    scanf("%d", &N);
+    for (int i=0; i<N; i++){
+        scanf("%d", &arr[i]);
+    }
+    int dp[2][2];
+    int cnt=0;
+    int newarr[N];
+    memcpy(newarr, arr, sizeof(int)*N);
+    while(1){
+        for (int i=0; i<N;i++){
+            if (newarr[i]!=i+1){
+                for (int j=i+1; j<N; j++){
+                    if (newarr[j]==i+1){
+                        swap(i,j,newarr);
+                        dp[cnt][0]=i+1;
+                        dp[cnt][1]=j+1;
+                        cnt++;
+                        // printf("%d\n",cnt);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        if(judg(newarr, N)){break;}
+        if(cnt==3){break;}
+    }
+    // printf("%d\n",cnt);
+    if (cnt==3){
+        cnt=0;
+        while(1){
+            for (int i=N-1; i>=0;i--){
+                if (arr[i]!=i+1){
+                    for (int j=i-1; j>=0; j--){
+                        if (arr[j]==i+1){
+                            // printf("i, j: %d, %d\n", i, j);
+                            swap(j,i,arr);
+                            dp[cnt][0]=j+1;
+                            dp[cnt][1]=i+1;
+                            cnt++;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            if(judg(arr, N)){break;}
+            if(cnt==3){break;}
+        }
+    }    
+    // printf("%d\n",cnt);
+    if(cnt==0){
+        printf("1 1\n1 1");
+    }    
+    if(cnt==1){
+        printf("%d %d\n1 1", dp[0][0], dp[0][1]);
+    }    
+    if(cnt==2){
+        printf("%d %d\n%d %d", dp[0][0], dp[0][1], dp[1][0], dp[1][1]);
+    }
+    return 0;
+}
