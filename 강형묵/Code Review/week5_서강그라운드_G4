@@ -1,1 +1,74 @@
+#include <iostream>
+#include <stdio.h>
+#include <vector>
+#include <queue>
+#include <limits>
+using namespace std;
+#define range 15
+#define MAX 100
+const int INF = numeric_limits<int>::max();
+int n,m,r;
+int country[MAX];
+int load[MAX][3];
+vector<pair<int, int>> adj[MAX];
+int dijkstra(int start, int end) {
+    vector<int> dist(n + 1, INF); 
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
 
+    dist[start] = 0;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current_dist = pq.top().first;
+        int current = pq.top().second;
+        pq.pop();
+
+        if (current == end) return current_dist; 
+
+        if (current_dist > dist[current]) continue;
+
+        for (auto &[next, weight] : adj[current]) {
+            int new_dist = current_dist + weight;
+            if (new_dist < dist[next]) {
+                dist[next] = new_dist;
+                pq.push({new_dist, next});
+            }
+        }
+    }
+
+    return -1; 
+}
+
+
+int main() {
+    scanf("%d", &n);
+    scanf("%d", &m);
+    scanf("%d", &r);
+    for (int i=0; i<n;i++){
+        scanf("%d",&country[i]);
+    }
+    for (int i=0; i<r;i++){
+        scanf("%d %d %d",&load[i][0],&load[i][1],&load[i][2]);
+    }
+    for (int i = 0; i < r; i++) {
+    int a = load[i][0], b = load[i][1], c = load[i][2];
+        adj[a].push_back({b, c});
+        adj[b].push_back({a, c}); 
+    }
+    int ans=0;
+    for (int i=1; i<=n;i++){
+        int cnt=0;
+        for (int j=1;j<=n;j++){
+            if (dijkstra(i,j)<=m){
+                // printf("%d, %d: %d\n", i, j, dijkstra(i,j));
+                cnt+=country[j-1];
+            }
+        }
+        if (cnt>ans){
+            ans=cnt;
+        }
+    }
+    // printf("%d\n",dijkstra(1,5));
+    printf("%d", ans);
+    return 0;
+}
